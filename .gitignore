@@ -1,0 +1,19 @@
+# Environment Files
+*.env
+
+# Virtual Environment
+venv/
+__pycache__/
+*.pyc
+
+# Database Files
+*.sqlite3
+
+
+# IDE and editor settings
+.vs/
+*.pyproj
+*.pyproj.user
+obj/
+
+

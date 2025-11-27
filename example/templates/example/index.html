@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="relative min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-gray-500 bg-no-repeat bg-cover"
+         style="background-image: url(https://images.unsplash.com/photo-1621243804936-775306a8f2e3?auto=format&fit=crop&w=1950&q=80);">
+        <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
+
+        <div class="sm:max-w-lg w-full p-10 bg-white rounded-xl z-10">
+            <div class="text-center">
+                <h2 class="mt-5 text-3xl font-bold text-gray-900">File Upload!</h2>
+                <p class="mt-2 text-sm text-gray-400">Upload your favourite car to S3 Storage.</p>
+            </div>
+
+            <form class="mt-8 space-y-3" action="{% url 'index' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 space-y-2">
+                    <label class="text-sm font-bold text-gray-500 tracking-wide">Name</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="grid grid-cols-1 space-y-2">
+                    <label class="text-sm font-bold text-gray-500 tracking-wide">Attach File</label>
+
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col rounded-lg border-4 border-dashed w-full h-60 p-10 group text-center cursor-pointer">
+                            <div class="h-full w-full text-center flex flex-col items-center justify-center">
+                                <div class="flex flex-auto max-h-48 w-2/5 mx-auto -mt-10">
+                                    
+                                </div>
+                                <!-- IMAGE PREVIEW -->
+                                <img id="image-preview" class="mt-4 mx-auto h-40 hidden rounded-lg shadow" />
+                                <p id="file-name-display" class="pointer-none text-gray-500">
+                                    <span class="text-sm">Drag and drop</span> files here <br />
+                                    or <span class="text-blue-600 hover:underline">select a file</span>
+                                </p>
+                            </div>
+
+                            {{ form.picture }}
+                        </label>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-300">
+                    <span>File type: png, jpg</span>
+                </p>
+
+                <div>
+                    <button type="submit"
+                            class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold focus:outline-none hover:bg-blue-600 shadow-lg cursor-pointer transition">
+                        Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .has-mask {
+            position: absolute;
+            clip: rect(10px, 150px, 130px, 10px);
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fileInput = document.querySelector('input[type="file"]');
+            const fileNameDisplay = document.querySelector("#file-name-display");
+            const imagePreview = document.querySelector("#image-preview");
+
+            // Show file name + image preview
+            fileInput.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+
+                    // Show filename
+                    fileNameDisplay.textContent = file.name;
+
+                    // Show image preview if it's an image
+                    if (file.type.startsWith("image/")) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.classList.remove("hidden");
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        // Hide preview for non-images
+                        imagePreview.src = "";
+                        imagePreview.classList.add("hidden");
+                    }
+                }
+            });
+
+            // Make the whole upload box clickable
+            document.querySelector(".group").addEventListener("click", function () {
+                fileInput.click();
+            });
+        });
+    </script>
+
+</body>
+</html>
